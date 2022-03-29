@@ -12,7 +12,7 @@ System requirements:
 - Remote hosts:
   - All Docker hosts must have passwordless SSH access
   - Supported Distros = automatically adjust host's Distro (look at https://docs.docker.com/engine/install/ for more information about compatible distros)
-  - All Docker hosts must have sudo access for Docker installation
+  - All Docker hosts must have sudo/root access for Docker installation
 
 # Run Terraform
 - change your directory to Terraform
