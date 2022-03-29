@@ -1,4 +1,4 @@
-# Combine Terraform and Ansible for VM and Docker Swarm Cluster Creation
+# Combine Terraform and Ansible for Proxmox VM and Docker Swarm Cluster Creation
 
 
 Docker Engine Version: latest (Engine: 20.10.14, Client: 20.10.14)
@@ -23,4 +23,3 @@ terraform apply
 ```
 Limitations:
  - if we want to add more workers, we have to manually add sshpass and slave lines in main.tf, and change count to n vms
-
