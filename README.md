@@ -5,10 +5,11 @@ Docker Engine Version: latest (Engine: 20.10.14, Client: 20.10.14)
 Containerd Version: 1.5.11
 
 System requirements:
-- Localhost:
+- Localhost (Linux, Windows with WSL, or MacOS) with:
   - Ansible 2.10.1+
   - Terraform v1.1.+
   - Telmate/terraform-provider-proxmox Plugin for Terraform (automatically installed when we initiate terraform)
+  - Sshpass 
 
 - Proxmox Server (v7.1-x)
   - Cloud-Init template for VM creation
