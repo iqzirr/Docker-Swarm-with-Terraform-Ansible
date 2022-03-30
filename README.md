@@ -11,7 +11,7 @@ System requirements:
   - Telmate/terraform-provider-proxmox Plugin for Terraform (automatically installed when we initiate terraform)
 
 - Proxmox Server (v7.1-x)
-  - cloud-init template for VM creation
+  - Cloud-Init template for VM creation
   - API Token for accessing Proxmox
 
 - Remote hosts(Proxmox VMs):
@@ -21,19 +21,19 @@ System requirements:
   - All Docker hosts must have sudo/root access for Docker installation
 
 # How to run the stack
-- first, change your directory to Terraform
-- configure all the needed variables in variables.tf
-- to modify the amount and the spec of the vms, configure it in main.tf
+- First, change your directory to Terraform
+- Configure all the needed variables in variables.tf
+- To modify the amount and the spec of the vms, configure it in main.tf
 
 ```
 terraform init
 terraform plan
 terraform apply
 ```
-- to delete the hosts
+- To delete the hosts
 ```
 terraform destroy
 ```
 
 Limitations:
- - if we want to add more workers, we have to manually add sshpass and slave lines in main.tf, and change count to n vms
+ - If we want to add more workers, we have to manually add sshpass and slave lines in main.tf, and change count to n vms
