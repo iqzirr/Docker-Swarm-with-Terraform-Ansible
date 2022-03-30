@@ -76,6 +76,7 @@ resource "local_file" "generate_ssh-copy-id_executable"{
           rm send-ssh-id.sh
           cd ../Ansible && ansible-playbook -i Hosts installDocker.yaml
           cd ../Ansible && ansible-playbook -i Hosts initSwarm.yaml
+          rm ../Ansible/Hosts
     EOT
   }
 }
