@@ -15,3 +15,7 @@ variable "template_name" {
 variable "proxmox_host" {
     default = "mitsvr06"
 }
+
+variable "proxmox_api_url" {
+    default = "https://172.16.20.206:8006/api2/json"
+}
