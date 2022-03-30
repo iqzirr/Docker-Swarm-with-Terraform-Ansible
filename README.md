@@ -21,8 +21,10 @@ System requirements:
   - All Docker hosts must have sudo/root access for Docker installation
 
 # How to run the stack
-- change your directory to Terraform
+- first, change your directory to Terraform
 - configure all the needed variables in variables.tf
+- to modify the amount and the spec of the vms, configure it in main.tf
+
 ```
 terraform init
 terraform plan
