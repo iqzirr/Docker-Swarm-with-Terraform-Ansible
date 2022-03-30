@@ -15,7 +15,7 @@ provider "proxmox" {
 }
 
 resource "proxmox_vm_qemu" "docker_vm" {
-  count       = 3
+  count       = 3  #the number of hosts we want to create (3 = 1 master + 2 slave)
   name        = "docker-vm-${count.index + 1}"
   target_node = var.proxmox_host
   clone       = var.template_name
@@ -52,19 +52,22 @@ resource "local_file" "host_ips"{
   filename = "../Ansible/Hosts"
   content  = <<EOF
   [Docker-Master]
-  master01    ansible_host=${proxmox_vm_qemu.docker_vm[0].ssh_host}    ansible_user=root ansible_port=22
+  master01    ansible_host=${proxmox_vm_qemu.docker_vm[0].ssh_host}    ansible_user=${var.proxmox_vm_user} ansible_port=${var.proxmox_vm_ssh_port}
   [Docker-Slave]
-  slave01     ansible_host=${proxmox_vm_qemu.docker_vm[1].ssh_host}    ansible_user=root ansible_port=22
-  slave02     ansible_host=${proxmox_vm_qemu.docker_vm[2].ssh_host}    ansible_user=root ansible_port=22
+  slave01     ansible_host=${proxmox_vm_qemu.docker_vm[1].ssh_host}    ansible_user=${var.proxmox_vm_user} ansible_port=${var.proxmox_vm_ssh_port}
+  slave02     ansible_host=${proxmox_vm_qemu.docker_vm[2].ssh_host}    ansible_user=${var.proxmox_vm_user} ansible_port=${var.proxmox_vm_ssh_port}
+  #add slaves as much as the host number -1
   EOF
 }
 
+#send ssh public key to vms for Docker installation with Ansible
 resource "local_file" "generate_ssh-copy-id_executable"{
   filename = "./send-ssh-id.sh"
   content  = <<EOF
-  sshpass -p "mit" ssh-copy-id -i $HOME/.ssh/id_rsa.pub -o StrictHostKeyChecking=accept-new root@${proxmox_vm_qemu.docker_vm[0].ssh_host}
-  sshpass -p "mit" ssh-copy-id -i $HOME/.ssh/id_rsa.pub -o StrictHostKeyChecking=accept-new root@${proxmox_vm_qemu.docker_vm[1].ssh_host}
-  sshpass -p "mit" ssh-copy-id -i $HOME/.ssh/id_rsa.pub -o StrictHostKeyChecking=accept-new root@${proxmox_vm_qemu.docker_vm[2].ssh_host}
+  sshpass -p ${var.proxmox_vm_password} ssh-copy-id -i $HOME/.ssh/id_rsa.pub -o StrictHostKeyChecking=accept-new ${var.proxmox_vm_user}@${proxmox_vm_qemu.docker_vm[0].ssh_host}
+  sshpass -p ${var.proxmox_vm_password} ssh-copy-id -i $HOME/.ssh/id_rsa.pub -o StrictHostKeyChecking=accept-new ${var.proxmox_vm_user}@${proxmox_vm_qemu.docker_vm[1].ssh_host}
+  sshpass -p ${var.proxmox_vm_password} ssh-copy-id -i $HOME/.ssh/id_rsa.pub -o StrictHostKeyChecking=accept-new ${var.proxmox_vm_user}@${proxmox_vm_qemu.docker_vm[2].ssh_host}
+  #add this line, as much as the host count
   EOF
   provisioner "local-exec" {
     command = <<-EOT
