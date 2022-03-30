@@ -14,13 +14,13 @@
       - gnupg
       - lsb-release
   - name: Get OS Distribution
-    shell: cat /etc/os-release | grep -w ID |cut -d "=" -f 2 > $HOME/OS_distrib.txt
+    shell: cat /etc/os-release | grep -w ID |cut -d "=" -f 2 > /tmp/OS_distrib.txt
   - name: Add Docker GPG key
-    shell: curl -fsSL https://download.docker.com/linux/$(cat $HOME/OS_distrib.txt)/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-  - name: Remove OS_distrib file
-    shell: rm $HOME/OS_distrib.txt 
+    shell: curl -fsSL https://download.docker.com/linux/$(cat /tmp/OS_distrib.txt)/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
   - name: Add Docker APT Repository
-    shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+    shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/$(cat /tmp/OS_distrib.txt) $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+  - name: Remove OS_distrib file
+    shell: rm /tmp/OS_distrib.txt 
   - name: Install Docker Packages
     apt:
       update_cache: yes
