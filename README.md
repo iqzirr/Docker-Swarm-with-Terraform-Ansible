@@ -18,7 +18,7 @@ System requirements:
 - Remote hosts(Proxmox VMs):
   - All Docker hosts must have SSH installed
   - All Docker hosts must have passwordless SSH access (will be configured with ssh-copy-id, initiate our host with ssh-keygen first if we dont have public ssh key)
-  - Supported Distros = automatically adjust VM's Distro (look at https://docs.docker.com/engine/install/ for more information about compatible distros)
+  - Supported Distros = Debian and Ubuntu Linux (apt Package Manager)
   - All Docker hosts must have sudo/root access for Docker installation
 
 # How to run the stack
