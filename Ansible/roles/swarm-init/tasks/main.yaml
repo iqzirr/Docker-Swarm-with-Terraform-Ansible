@@ -1,0 +1,11 @@
+---
+- name: Initiate Docker Swarm
+  shell: docker swarm init
+- name: Save Join Command
+  shell: docker swarm join-token manager
+  register: join_command
+- name: Debug join cluster command
+  debug:
+    msg: "{{ join_command.stdout_lines[2] }}"  
+- name: Copy join command to local file
+  local_action: copy content="{{ join_command.stdout_lines[2] }}" dest="/tmp/join_command.sh" mode=0755

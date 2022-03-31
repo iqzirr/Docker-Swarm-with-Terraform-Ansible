@@ -16,7 +16,7 @@ provider "proxmox" {
 
 resource "proxmox_vm_qemu" "docker_vm" {
   count       = 3  #the number of hosts we want to create (3 = 1 master + 2 slave)
-  name        = "docker-vm-${count.index + 1}"
+  name        = "docker-${count.index + 1}"
   target_node = var.proxmox_host
   clone       = var.template_name
   os_type     = "cloud_init"
@@ -44,39 +44,26 @@ resource "proxmox_vm_qemu" "docker_vm" {
   }
 }
 
-output "nodeip" {
-  value = "${proxmox_vm_qemu.docker_vm.*.ssh_host}"
-}
-
-resource "local_file" "host_ips"{
-  filename = "../Ansible/Hosts"
-  content  = <<EOF
-  [Docker-Master]
-  master01    ansible_host=${proxmox_vm_qemu.docker_vm[0].ssh_host}    ansible_user=${var.proxmox_vm_user} ansible_port=${var.proxmox_vm_ssh_port}
-  [Docker-Slave]
-  slave01     ansible_host=${proxmox_vm_qemu.docker_vm[1].ssh_host}    ansible_user=${var.proxmox_vm_user} ansible_port=${var.proxmox_vm_ssh_port}
-  slave02     ansible_host=${proxmox_vm_qemu.docker_vm[2].ssh_host}    ansible_user=${var.proxmox_vm_user} ansible_port=${var.proxmox_vm_ssh_port}
-  #add slaves as much as the host number -1
-  EOF
-}
-
-#send ssh public key to vms for Docker installation with Ansible
 resource "local_file" "generate_ssh-copy-id_executable"{
-  filename = "./send-ssh-id.sh"
-  content  = <<EOF
-  sshpass -p ${var.proxmox_vm_password} ssh-copy-id -i $HOME/.ssh/id_rsa.pub -o StrictHostKeyChecking=accept-new ${var.proxmox_vm_user}@${proxmox_vm_qemu.docker_vm[0].ssh_host}
-  sshpass -p ${var.proxmox_vm_password} ssh-copy-id -i $HOME/.ssh/id_rsa.pub -o StrictHostKeyChecking=accept-new ${var.proxmox_vm_user}@${proxmox_vm_qemu.docker_vm[1].ssh_host}
-  sshpass -p ${var.proxmox_vm_password} ssh-copy-id -i $HOME/.ssh/id_rsa.pub -o StrictHostKeyChecking=accept-new ${var.proxmox_vm_user}@${proxmox_vm_qemu.docker_vm[2].ssh_host}
-  #add this line, as much as the host count
-  EOF
+  count = "${length(proxmox_vm_qemu.docker_vm)}"
+  filename = "./ssh-${count.index+1}"
+  content= "sshpass -p ${var.proxmox_vm_password} ssh-copy-id -i $HOME/.ssh/id_rsa.pub -o StrictHostKeyChecking=accept-new ${var.proxmox_vm_user}@${proxmox_vm_qemu.docker_vm[count.index].ssh_host}"
+}
+
+resource "local_file" "generate_ansible_hosts" {
+  count = "${length(proxmox_vm_qemu.docker_vm)}"
+  filename = "./vm_info-${count.index+1}"
+  content= "node-${count.index+1}  ansible_host=${proxmox_vm_qemu.docker_vm[count.index].ssh_host}      ansible_user=${var.proxmox_vm_user}     ansible_port=${var.proxmox_vm_ssh_port}"
+}
+
+resource "null_resource" "execute_files"{
+  depends_on= [local_file.generate_ansible_hosts]
   provisioner "local-exec" {
     command = <<-EOT
-          chmod +x ./send-ssh-id.sh
-          sh send-ssh-id.sh
-          rm send-ssh-id.sh
-          cd ../Ansible && ansible-playbook -i Hosts installDocker.yaml
-          cd ../Ansible && ansible-playbook -i Hosts initSwarm.yaml
-          rm ../Ansible/Hosts
+          bash createSshCopyID.sh
+          bash createAnsibleHostfile.sh
+          bash ssh_copy_id.sh
+          cd ../Ansible && ansible-playbook main.yaml
     EOT
   }
 }

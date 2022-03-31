@@ -1,8 +1,12 @@
-# Combine Terraform and Ansible for Proxmox VM and Docker Swarm Cluster Creation
+# Terraform and Ansible for Docker Swarm Cluster Installer in Proxmox
 
+features:
+ - Automatically detect host's OS Distribution
+ - Multi-Master Docker Swarm
 
-Docker Engine Version: latest (Engine: 20.10.14, Client: 20.10.14)
-Containerd Version: 1.5.11
+System version:
+ - Docker Engine Version: latest (Engine: 20.10.14, Client: 20.10.14)
+ - Containerd Version: 1.5.11
 
 System requirements:
 - Localhost (Linux, Windows with WSL, or MacOS) with:
@@ -18,13 +22,13 @@ System requirements:
 - Remote hosts(Proxmox VMs):
   - All Docker hosts must have SSH installed
   - All Docker hosts must have passwordless SSH access (will be configured with ssh-copy-id, initiate our host with ssh-keygen first if we dont have public ssh key)
-  - Supported Distros = Debian and Ubuntu Linux (apt Package Manager)
-  - All Docker hosts must have sudo/root access for Docker installation
+  - Supported Distros = all distros that are supported in this Docs (https://docs.docker.com/engine/install/)
+  - All Docker hosts must have sudo/root access for Docker installation 
 
 # How to run the stack
 - First, change your directory to Terraform
-- Configure all the needed variables in variables.tf
-- To modify the amount and the spec of the vms, configure it in main.tf
+- Configure all the needed variables and the amount of the vms in variables.tf
+- To modify the spec of the vms, configure it in main.tf
 
 ```
 terraform init
@@ -36,5 +40,3 @@ terraform apply
 terraform destroy
 ```
 
-Limitations:
- - If we want to add more workers, we have to manually add sshpass and slave lines in main.tf, and change count to n vms

@@ -1,0 +1,19 @@
+---
+- name: Install the Docker App
+  gather_facts: true
+  hosts: 
+    - all
+  roles:
+    - docker_installation
+
+- name: Initiate Docker Swarm
+  hosts: 
+    - Docker-Swarm-Init
+  roles:
+    - swarm-init
+
+- name: Join the Docker Swarm
+  hosts:
+    - Docker-Swarm-Join
+  roles:
+    - swarm-join
