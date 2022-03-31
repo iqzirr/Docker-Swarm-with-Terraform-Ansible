@@ -15,7 +15,7 @@ provider "proxmox" {
 }
 
 resource "proxmox_vm_qemu" "docker_vm" {
-  count       = 3  #the number of hosts we want to create (3 = 1 master + 2 slave)
+  count       = var.proxmox_vm_count  #the number of hosts we want to create (3 = 1 master + 2 slave)
   name        = "docker-${count.index + 1}"
   target_node = var.proxmox_host
   clone       = var.template_name
