@@ -1,0 +1,12 @@
+
+[Docker-Swarm-Init]
+node-1  ansible_host="your_node_ip"      ansible_user="your_node_user"     ansible_port="your_node_ssh_port"
+
+[Docker-Swarm-Join]
+node-2  ansible_host="your_node_ip"      ansible_user="your_node_user"     ansible_port="your_node_ssh_port"
+node-3  ansible_host="your_node_ip"      ansible_user="your_node_user"     ansible_port="your_node_ssh_port"
+node-n
+...
+...
+
+#ie: node-1  ansible_host=123.123.123.123      ansible_user=root    ansible_port=22

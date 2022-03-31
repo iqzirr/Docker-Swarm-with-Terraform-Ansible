@@ -39,4 +39,12 @@ terraform apply
 ```
 terraform destroy
 ```
+# For running Ansible only (for installing Docker Cluster in multiple hosts)
+- Change your directory to Ansible
+- Rename Hosts.tmp to Hosts
+- Configure the hosts we want to install
 
+```
+ansible-playbook main.yaml
+
+```
