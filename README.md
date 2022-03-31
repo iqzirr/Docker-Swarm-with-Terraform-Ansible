@@ -1,6 +1,6 @@
 # Terraform and Ansible for Docker Swarm Cluster Installer in Proxmox
 
-features:
+Features:
  - Automatically detect host's OS Distribution
  - Multi-Master Docker Swarm
 
