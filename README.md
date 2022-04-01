@@ -25,7 +25,7 @@ System requirements:
   - Supported Distros = all distros that are supported in this Docs (https://docs.docker.com/engine/install/)
   - All Docker hosts must have sudo/root access for Docker installation 
 
-# How to run all of the stack
+# How to run all of the stacks
 - First, change your directory to Terraform
 - Configure all the needed variables and the amount of the vms in variables.tf
 - To modify the spec of the vms, configure it in main.tf
