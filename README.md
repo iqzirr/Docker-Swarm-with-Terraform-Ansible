@@ -35,7 +35,7 @@ terraform init
 terraform plan
 terraform apply
 ```
-- To delete the hosts
+- To delete the Cluster and hosts
 ```
 terraform destroy
 ```
