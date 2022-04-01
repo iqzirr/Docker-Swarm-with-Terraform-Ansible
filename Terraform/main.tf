@@ -57,7 +57,10 @@ resource "local_file" "generate_ansible_hosts" {
 }
 
 resource "null_resource" "execute_files"{
-  depends_on= [local_file.generate_ansible_hosts]
+  depends_on= [
+    local_file.generate_ansible_hosts,
+    local_file.generate_ssh-copy-id_executable,
+  ]
   provisioner "local-exec" {
     command = <<-EOT
           bash createSshCopyID.sh
