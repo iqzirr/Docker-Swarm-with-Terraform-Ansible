@@ -1,0 +1,10 @@
+# refer to this docs to learn more https://docs.docker.com/compose/compose-file/compose-file-v3/
+version: "3.9" 
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "443:443"
+      - "80:80"
+    deploy:
+      replicas: 10

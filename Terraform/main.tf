@@ -20,6 +20,7 @@ resource "proxmox_vm_qemu" "docker_vm" {
   target_node = var.proxmox_host
   clone       = var.template_name
   os_type     = "cloud_init"
+  ipconfig0   = "ip=172.16.20.${count.index + 150}/24"
   
   ## VM Specs
   agent       = 1
@@ -66,7 +67,16 @@ resource "null_resource" "execute_files"{
           bash createSshCopyID.sh
           bash createAnsibleHostfile.sh
           bash ssh_copy_id.sh
-          cd ../Ansible && ansible-playbook main.yaml
+          ansible-playbook ../Ansible/main.yaml
     EOT
   }
+}
+
+resource "local_file" "generate_docker_ssh" {
+  depends_on= [ null_resource.execute_files ]
+  filename = "../Docker/dockerssh.sh"
+  content= <<-EOT
+    #!/bin/bash
+    docker -H "ssh://${var.proxmox_vm_user}@${proxmox_vm_qemu.docker_vm[0].ssh_host}" --compose-file docker_service.yaml your-stack-name
+    EOT
 }
