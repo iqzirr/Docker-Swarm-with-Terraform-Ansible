@@ -51,4 +51,10 @@ ansible-playbook main.yaml
 ```
 # For running Docker Apps
 - After running the terraform init, go to Docker folder
-- you can 
+- you can create docker resource with generated dockersshfile, ie:
+
+```
+bash dockerssh run -d --name my-nginx nginx:latest
+bash dockerssh stack deploy --compose-file docker_service.yaml my_service
+
+```
