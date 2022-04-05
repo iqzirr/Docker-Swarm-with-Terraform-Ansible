@@ -14,6 +14,7 @@ System requirements:
   - Terraform v1.1.+
   - Telmate/terraform-provider-proxmox Plugin for Terraform (automatically installed when we initiate terraform)
   - Sshpass 
+  - Docker-cli (for remote docker control)
 
 - Proxmox Server (v7.1-x)
   - Cloud-Init template for VM creation
@@ -48,3 +49,6 @@ terraform destroy
 ansible-playbook main.yaml
 
 ```
+# For running Docker Apps
+- After running the terraform init, go to Docker folder
+- you can 
