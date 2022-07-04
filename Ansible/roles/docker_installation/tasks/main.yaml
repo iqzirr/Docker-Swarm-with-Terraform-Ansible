@@ -1,0 +1,175 @@
+---
+# --------------------------------------
+# -- CentOS
+# --------------------------------------
+- name: Install docker engine
+  block:
+  - name: Update repository caches and install docker needed packages
+    yum:
+      update_cache: yes
+      state: latest
+      pkg:
+      - yum-utils
+  - name: Adding Docker YUM Repository
+    shell: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  - name: installing Docker Packages
+    yum:
+      update_cache: yes
+      state: latest
+      pkg:
+      - docker-ce 
+      - docker-ce-cli 
+      - containerd.io
+  - name: make sure the Docker systemd is running
+    systemd:
+      name: docker
+      state: started
+      enabled: true
+  when: ansible_facts['distribution'] == "CentOS"
+
+# --------------------------------------
+# -- Fedora
+# --------------------------------------
+
+- name: Install docker engine
+  block:
+  - name: Update repository caches and install docker needed packages
+    dnf:
+      update_cache: yes
+      state: latest
+      pkg:
+      - dnf-plugins-core
+  - name: Adding Docker DNF Repository
+    shell: dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+  - name: installing Docker Packages
+    dnf:
+      update_cache: yes
+      state: latest
+      pkg:
+      - docker-ce 
+      - docker-ce-cli 
+      - containerd.io
+  - name: make sure the Docker systemd is running
+    systemd:
+      name: docker
+      state: started
+      enabled: true
+
+  when: ansible_facts['distribution'] == "Fedora"
+
+# --------------------------------------
+# -- Rhel
+# --------------------------------------
+
+- name: Install docker engine
+  block:
+  - name: Update repository caches and install docker needed packages
+    yum:
+      update_cache: yes
+      state: latest
+      pkg:
+      - yum-utils
+  - name: Adding Docker YUM Repository
+    shell: yum-config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
+  - name: installing Docker Packages
+    yum:
+      update_cache: yes
+      state: latest
+      pkg:
+      - docker-ce 
+      - docker-ce-cli 
+      - containerd.io
+  when: ansible_facts['distribution'] == "RedHat"
+
+# --------------------------------------
+# -- SLES / SUSE
+# --------------------------------------
+
+- name: Install docker engine
+  block:
+  - name: Enabling SELinux repository
+    shell: sles_version="$(. /etc/os-release && echo "${VERSION_ID##*.}")" ; opensuse_repo="https://download.opensuse.org/repositories/security:SELinux/SLE_15_SP$sles_version/security:SELinux.repo" ; zypper addrepo $opensuse_repo 
+  - name: Adding Docker Repo
+    shell: zypper addrepo https://download.docker.com/linux/sles/docker-ce.repo
+  - name: Installing Docker Packages
+    zypper:
+      update_cache: yes
+      state: latest
+      pkg:
+      - docker-ce 
+      - docker-ce-cli 
+      - containerd.io
+  - name: make sure the Docker systemd is running
+    systemd:
+      name: docker
+      state: started
+      enabled: true
+  when: ansible_facts['distribution'] == "Suse"
+
+# --------------------------------------
+# -- Ubuntu
+# --------------------------------------
+
+- name: Install docker engine
+  block:
+  - name: Update repository caches and install docker needed packages
+    apt:
+      update_cache: yes
+      state: latest
+      pkg:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+  - name: Adding Docker GPG key
+    shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+  - name: Adding Docker APT Repository
+    shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  - name: installing Docker Packages
+    apt:
+      update_cache: yes
+      state: latest
+      pkg:
+      - docker-ce 
+      - docker-ce-cli 
+      - containerd.io
+  - name: make sure the Docker systemd is running
+    systemd:
+      name: docker
+      state: started
+      enabled: true
+  when: ansible_facts['distribution'] == "Ubuntu"
+
+# --------------------------------------
+# -- Debian & Raspbian
+# --------------------------------------
+
+- name: Install docker engine
+  block:
+  - name: Update repository caches and install docker needed packages
+    apt:
+      update_cache: yes
+      state: latest
+      pkg:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+  - name: Adding Docker GPG key
+    shell: curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+  - name: Adding Docker APT Repository
+    shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+  - name: Installing Docker Packages
+    apt:
+      update_cache: yes
+      state: latest
+      pkg:
+      - docker-ce 
+      - docker-ce-cli 
+      - containerd.io
+  - name: make sure the Docker systemd is running
+    systemd:
+      name: docker
+      state: started
+      enabled: true
+  when: ansible_facts['distribution'] == "Debian"

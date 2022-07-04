@@ -1,0 +1,51 @@
+---
+- name: Configuring the Docker Daemon
+  file:
+    path: /etc/docker/daemon.json
+    state: touch
+    mode: 0755      
+
+- name: Configuring the Docker Daemon to open the API port (2375)
+  copy:
+    dest: /etc/docker/daemon.json
+    content: |
+      {"hosts": ["tcp://0.0.0.0:2375", "unix:///var/run/docker.sock"]}
+
+- name: Configuring the Docker Daemon
+  file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+
+- name: Configuring the Docker Daemon
+  file:
+    path: /etc/systemd/system/docker.service.d/override.conf
+    state: touch
+    mode: 0755      
+
+- name: Configuring the Docker Daemon
+  blockinfile:
+    path: /etc/systemd/system/docker.service.d/override.conf
+    block: |
+      [Service]
+      ExecStart=
+      ExecStart=/usr/bin/dockerd
+
+- name: Reloading Docker Daemon
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    name: docker
+
+- name: Initiate Docker Swarm
+  shell: docker swarm init
+
+- name: Save Join Command
+  shell: docker swarm join-token manager
+  register: join_command
+
+- name: Debug join cluster command
+  debug:
+    msg: "{{ join_command.stdout_lines[2] }}"  
+
+- name: Copy join command to local file
+  local_action: copy content="{{ join_command.stdout_lines[2] }}" dest="/tmp/join_command.sh" mode=0755

@@ -1,0 +1,14 @@
+---
+- name: Copy the Docker Swarm join command
+  copy:
+    src: /tmp/join_command.sh 
+    dest: /tmp
+    mode: 0755
+
+- name: Join the Docker Swarm
+  shell: /tmp/join_command.sh
+  
+- name: Remove Join Command
+  shell: rm /tmp/join_command.sh
+#- name: Remove local join file
+#  local_action: command rm /tmp/join_command.sh
